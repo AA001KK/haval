@@ -36,11 +36,12 @@ const { pdfValidationRules } = require("./validators/pfkit.js");
 const multer = require("multer");
 const upload = multer();
 const { checkSchema } = require("express-validator");
+const { getAllAdmin, updateAdmin } = require("./controllers/adminController");
 const {
-  getAllAdmin,
-  updateAdmin,
-} = require("./controllers/adminController");
-const { createAdmin, updateSuperAdmin, deleteAdmin } = require("./controllers/superAdminController.js")
+  createAdmin,
+  updateSuperAdmin,
+  deleteAdmin,
+} = require("./controllers/superAdminController.js");
 const {
   getCars,
   addCar,
@@ -104,10 +105,12 @@ const {
   getOrders,
   makePayment,
   createOrder,
-  deleteOrder
+  deleteOrder,
 } = require("./shartnoma/controllers/orderController");
 const { Profil, updatedProfil } = require("./controllers/profil.js");
-const { adminAccessMiddleware } = require("./middlewares/admin-access.middleware.js");
+const {
+  adminAccessMiddleware,
+} = require("./middlewares/admin-access.middleware.js");
 const router = require("express").Router();
 
 router
@@ -333,7 +336,11 @@ router
     roleAccessMiddleware(["superadmin", "admin"]),
     deleteVideo
   )
-  .post("/generate-pdf", /* jwtAccessMiddleware,*/ [...pdfValidationRules], generate_pdf)
+  .post(
+    "/generate-pdf",
+    /* jwtAccessMiddleware,*/ [...pdfValidationRules],
+    generate_pdf
+  )
   .post("/download-pdf/:filename", download_pdf)
 
   .post(
@@ -343,8 +350,13 @@ router
     createOrder
   )
   .get("/orders", /* jwtAccessMiddleware, */ getOrders)
-  .post("/orders/pay", jwtAccessMiddleware, makePayment)
-  .delete("/orders/:id", /* jwtAccessMiddleware, */ deleteOrder)
+  .post(
+    "/orders-pay/:id",
+    jwtAccessMiddleware,
+    roleAccessMiddleware(["superadmin", "admin"]),
+    makePayment
+  )
+  .delete("/orders/:id", jwtAccessMiddleware, deleteOrder)
 
   .get("/profil/:id", jwtAccessMiddleware, Profil)
   .put(

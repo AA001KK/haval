@@ -103,13 +103,12 @@ exports.makePayment = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found!" });
     }
-    
+
     if (order.status === "Pending") {
-    order.status = "Paid";
-    await order.save();
+      order.status = "Paid";
+      await order.save();
       return res.status(400).json({ message: "Order is already paid!" });
     }
-
 
     return res
       .status(200)

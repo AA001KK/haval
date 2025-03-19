@@ -6,7 +6,7 @@ const Admin = new mongoose.Schema({
     password: { type: String, },
     role: { type: String, enum: ["superadmin", "admin"], default: "admin" },
     status: { type: Number, default: 0 },
-    lastLogin: { type: Date, default: null },
-});
+    lastLogin: { type: Date, default: Date.now },
+},{ timestamps: true });
 
 module.exports = mongoose.model("Admin", Admin);
